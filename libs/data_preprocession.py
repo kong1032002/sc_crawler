@@ -21,7 +21,7 @@ def preprocessing(early_predict, smart_contract_addr = '', pair_id = '' ):
     mint_data_transaction = get_first_transaction_period(mint_data_transaction, initial_timestamp, early_predict)
     swap_data_transaction = get_first_transaction_period(swap_data_transaction, initial_timestamp, early_predict)
     burn_data_transaction = get_first_transaction_period(burn_data_transaction, initial_timestamp, early_predict)
-    
+
     mint_count = len(mint_data_transaction)
     swap_count = len(swap_data_transaction)
     burn_count = len(burn_data_transaction)
@@ -41,16 +41,16 @@ def preprocessing(early_predict, smart_contract_addr = '', pair_id = '' ):
     data = {
         'id': pair['id'],
         'Label': None,
-        'mint_count_per_week': mint_count / ((int(active_period) / (60* 60 * 24 * 7)) + 1),
-        'burn_count_per_week': burn_count / ((int(active_period) / (60* 60 * 24 * 7)) + 1),
+        'mint_count_per_week': mint_count / ((int(active_period) / (60* 60 * 24 * 7)) + 1) if int(active_period) != 0 else 0,
+        'burn_count_per_week': burn_count / ((int(active_period) / (60* 60 * 24 * 7)) + 1) if int(active_period) != 0 else 0,
         'mint_ratio': mint_count / (mint_count + burn_count + swap_count),
         'swap_ratio': swap_count / (mint_count + burn_count + swap_count),
         'burn_ratio': burn_count / (mint_count + burn_count + swap_count),
-        'mint_mean_period': mint_mean_period / active_period,
-        'swap_mean_period': swap_mean_period / active_period,
-        'burn_mean_period': burn_mean_period / active_period,
-        'swap_in_per_week': swap_in /((int(active_period) / (60* 60 * 24 * 7)) + 1),
-        'swap_out_per_week': swap_out /((int(active_period) / (60* 60 * 24 * 7)) + 1),
+        'mint_mean_period': mint_mean_period / active_period if int(active_period) != 0 else 0,
+        'swap_mean_period': swap_mean_period / active_period if int(active_period) != 0 else 0,
+        'burn_mean_period': burn_mean_period / active_period if int(active_period) != 0 else 0,
+        'swap_in_per_week': swap_in /((int(active_period) / (60* 60 * 24 * 7)) + 1) if int(active_period) != 0 else 0,
+        'swap_out_per_week': swap_out /((int(active_period) / (60* 60 * 24 * 7)) + 1) if int(active_period) != 0 else 0,
         'swap_rate': swap_in / (swap_out + 1),
         'lp_avg': lp_avg,
         'lp_std': lp_std,
@@ -59,5 +59,4 @@ def preprocessing(early_predict, smart_contract_addr = '', pair_id = '' ):
         'token_burn_ratio': token_burn_ratio,
         'token_creator_holding_ratio': token_creator_holding_ratio,
     }
-    print("Get info success full")
     return data

@@ -162,6 +162,10 @@ swap_query_template = '''
     to
     sender
     timestamp
+    pair {
+      token0 {symbol}
+      token1 {symbol}
+    }
   }
 }
 ''' 
