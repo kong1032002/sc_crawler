@@ -21,7 +21,13 @@ for i in range(df.shape[0]):
         print(id_value)
         result = preprocessing(early_predict=7, pair_id=id_value.strip())
         result['Label'] = df.iloc[i]['Label']
-        
+        result['lp_avg'] = df.iloc[i]['lp_avg']
+        result['lp_std'] = df.iloc[i]['lp_std']
+        result['lp_creator_holding_ratio'] = df.iloc[i]['lp_creator_holding_ratio']
+        result['lp_lock_ratio'] = df.iloc[i]['lp_lock_ratio']
+        result['token_burn_ratio'] = df.iloc[i]['token_burn_ratio']
+        result['token_creator_holding_ratio'] = df.iloc[i]['token_creator_holding_ratio']
+        result['number_of_token_creation_of_creator'] = df.iloc[i]['number_of_token_creation_of_creator']
         # Ghi dữ liệu vào file CSV
         pd.DataFrame([result]).to_csv(file_path, mode='a', header=False, index=False)
         processed_ids.append(id_value)
