@@ -1,1 +1,0 @@
-python3 crawal_data.py

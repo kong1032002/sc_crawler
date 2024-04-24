@@ -11,7 +11,7 @@ fast_predict_df = pd.read_csv('./Dataset/type_7days/Dataset_v1.9.csv')
 fast_predict_df.dropna(inplace=True) 
 fast_predict_df.rename(columns=lambda x : x.lower(), inplace=True)
 fast_predict_df['label'] = label_encoder.fit_transform(fast_predict_df['label'])
-x_fast = fast_predict_df.drop(columns=['id', 'label', 'number_of_token_creation_of_creator'], axis=1)
+x_fast = fast_predict_df.drop(columns=['id', 'label', 'number_of_token_creation_of_creator', 'token_creator_holding_ratio', 'lp_lock_ratio', 'lp_creator_holding_ratio'], axis=1)
 scaler = StandardScaler().fit(x_fast)
 
 model_file = './models/fast_predict.pkl'
@@ -35,27 +35,27 @@ else:
 
 def fast_predict(data):
 
-    # Convert data record to DataFrame
-    data_df = pd.DataFrame([data])  # Chuyển đổi dữ liệu bản ghi thành DataFrame
+    # Chuyển đổi dữ liệu bản ghi thành DataFrame
+    data_df = pd.DataFrame(data)  
 
     # Preprocess and predict data
     data_df.rename(columns=lambda x: x.lower(), inplace=True)
-    data_df = data_df.drop(columns=['id', 'label'], axis=1)
+    data_df = data_df.drop(columns=['id', 'label', 'token_creator_holding_ratio', 'lp_lock_ratio', 'lp_creator_holding_ratio'], axis=1)
     data_df = pd.DataFrame(scaler.transform(data_df))
 
     # Predict probabilities
     probabilities = fast_predict_model.predict_proba(data_df)
-
+    is_rugpull = fast_predict_model.predict(data_df)
     # Print probabilities of being 0 and 1
     print(f"Fast predict: Probability of being rugpull: {probabilities[0][1] * 100} %" )  # Chuyển đổi thành phần trăm
     # Return predicted probabilities
-    return probabilities
+    return (probabilities, is_rugpull)
 
 def normal_predict(data):
     data_df = pd.DataFrame([data])  # Chuyển đổi dữ liệu bản ghi thành DataFrame
     # Preprocess and predict data
     data_df.rename(columns=lambda x: x.lower(), inplace=True)
-    data_df = data_df.drop(columns=['id', 'label'], axis=1)
+    data_df = data_df.drop(columns=['id', 'label', 'number_of_token_creation_of_creator', 'token_creator_holding_ratio', 'lp_lock_ratio', 'lp_creator_holding_ratio'], axis=1)
     data_df = pd.DataFrame(scaler.transform(data_df))
 
     return 1

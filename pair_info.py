@@ -15,9 +15,7 @@ if args.pair:
     print("Địa chỉ cần xử lý:", args.pair)
     result = preprocessing(early_predict=7, pair_id=args.pair.strip())
     print("Lấy dữ liệu thành công")
-    predict_result = fast_predict(result)
+    predict_result = fast_predict(pd.DataFrame([result]))
     # print(json.dumps(predict(result), indent=1))
 else:
     print("Không có địa chỉ được cung cấp.")
-    
-    

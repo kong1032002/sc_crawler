@@ -1,5 +1,4 @@
 import requests
-import json
 from constant import *
 
 def send_request(query):

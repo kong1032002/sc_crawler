@@ -40,7 +40,7 @@ def preprocessing(early_predict, smart_contract_addr = '', pair_id = '' ):
         
     data = {
         'id': pair['id'],
-        'Label': None,
+        'label': None,
         'mint_count_per_week': mint_count / ((int(active_period) / (60* 60 * 24 * 7)) + 1) if int(active_period) != 0 else 0,
         'burn_count_per_week': burn_count / ((int(active_period) / (60* 60 * 24 * 7)) + 1) if int(active_period) != 0 else 0,
         'mint_ratio': mint_count / (mint_count + burn_count + swap_count),

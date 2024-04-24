@@ -1,7 +1,5 @@
 from constant import *
 from math import sqrt
-import json
-import datetime
 
 def get_last_transaction(mint_data_transaction, swap_data_transaction, burn_data_transaction):
    # Đếm số lượng giao dịch mint, swap và burn
