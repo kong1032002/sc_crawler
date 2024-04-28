@@ -11,7 +11,7 @@ def send_request(query):
 def get_pair(smart_contract_addr = '', pair_id=''):
   smart_contract_addr = smart_contract_addr.strip()
   pair_id = pair_id.strip()
-  if(smart_contract_addr != ''):
+  if(smart_contract_addr != ''): 
     addrs_str = f'''["{smart_contract_addr}", "{weth_addr}"]'''
     response = send_request(pair_by_token_id % (addrs_str, addrs_str))
   else:
@@ -23,23 +23,57 @@ def get_pair(smart_contract_addr = '', pair_id=''):
   pair['token'] = pair['token1'] if pair['token0']['symbol'] == 'WETH' else pair['token1']
   return pair
 
-def mint_transaction(pair_address, timestamp_gt = 0):
-  try:
-    response = send_request(query=mint_query_template % (pair_address, timestamp_gt))
-    return response['data']['mints']
-  except Exception as e:
-    raise Exception('Error in uniswap_grapql.mint_transaction'.format(e))
+def pair_transactions(pair_address, timestamp_gt):
+    query_params = f'''
+      orderBy: timestamp
+      orderDirection: asc
+      first: 1000
+      where: {{ pair: "{pair_address}", timestamp_gt: {timestamp_gt} }}
+    '''
     
-def swap_transaction(pair_address, timestamp_gt = 0):
-  try:
-    response = send_request(query=swap_query_template % (pair_address, timestamp_gt))
-    return response['data']['swaps']
-  except Exception as e:
-    raise Exception('Error in uniswap_grapql.mint_transaction'.format(e))
-
-def burn_transaction(pair_address, timestamp_gt):
-  try:    
-    response = send_request(query=burn_query_template % (pair_address, timestamp_gt))
-    return response['data']['burns']
-  except Exception as e:
-    raise Exception('Error in uniswap_grapql.mint_transaction'.format(e))
+    pair_transaction_template = f'''{{
+        mints({query_params}) {{
+            amount0
+            amount1
+            to
+            sender
+            timestamp
+            liquidity
+            pair {{
+                token0 {{ symbol }}
+                token1 {{ symbol }}
+            }}
+        }}
+        burns({query_params}) {{
+            amount0
+            amount1
+            to
+            liquidity
+            amountUSD
+            sender
+            timestamp
+        }}
+        swaps({query_params}) {{
+            amount0In
+            amount0Out
+            amount1In
+            amount1Out
+            to
+            sender
+            timestamp
+            amountUSD
+            pair {{
+                token0 {{ symbol }}
+                token1 {{ symbol }}
+            }}
+        }}
+    }}
+    '''
+    try:
+        response = send_request(pair_transaction_template)
+        mints = response['data']['mints']
+        burns = response['data']['burns']
+        swaps = response['data']['swaps']
+        return (mints, burns, swaps)
+    except Exception as e:
+        raise Exception('Error in uniswap_grapql.pair_transactions'.format(e))

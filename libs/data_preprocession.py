@@ -4,17 +4,20 @@ from libs.ethplorer import *
 
 def preprocessing(early_predict, smart_contract_addr = '', pair_id = '' ):
     pair = get_pair(smart_contract_addr=smart_contract_addr, pair_id=pair_id)
+    print("get pair success");
+    
     info = get_token_info(pair['token']['id'])
+    print("get token info success")
     token_creator = info['owner'] if 'owner' in info else ""
     
     lp_holders = get_holders(pair['id'])
+    print("get holder success");
     lp_lock_ratio = get_lock_ratio(holders=lp_holders)
     lp_avg,lp_std = calc_lp_distribution(lp_holders)
     lp_creator_holding_ratio = get_creator_ratio(holders=lp_holders, creator_address=token_creator)
     
-    mint_data_transaction = mint_transaction(pair_address=pair['id'], timestamp_gt=0)
-    swap_data_transaction = swap_transaction(pair_address=pair['id'], timestamp_gt=0)
-    burn_data_transaction = burn_transaction(pair_address=pair['id'], timestamp_gt=0)
+    mint_data_transaction, burn_data_transaction, swap_data_transaction = pair_transactions(pair_address=pair['id'], timestamp_gt=0)
+    print("get transaction success");
     
     initial_timestamp = int(mint_data_transaction[0]['timestamp'])
     
@@ -34,6 +37,8 @@ def preprocessing(early_predict, smart_contract_addr = '', pair_id = '' ):
     burn_mean_period = int(get_burn_mean_period(burn_data_transaction, initial_timestamp))
     
     swap_in,swap_out = swap_io_rate(swap_data_transaction,token_index(pair))
+    
+    
     token_holders = get_holders(pair['token']['id'])
     token_burn_ratio = get_burn_ratio(holders=lp_holders) 
     token_creator_holding_ratio = get_creator_ratio(token_holders,token_creator)

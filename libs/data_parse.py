@@ -106,10 +106,3 @@ def token_index(pair):
 
 def get_first_transaction_period(data_transactions, initial_timestamp, days):
    return [data for data in data_transactions if int(data['timestamp']) < (initial_timestamp + timestamp_to_date * days)] 
-
-def get_price_fluctuation(mint_transactions, swap_transactions, burn_transactions):
-   init_price = mint_transactions[0]['amountUSD'] / mint_transactions[0]['liquidity']
-   last_transaction = get_last_transaction(mint_transactions, swap_transactions, burn_transactions)
-   if last_transaction['liquidity'] != None:
-      last_price = int(last_transaction['amountUSD']) / int(last_transaction['liquidity'])
-   return 1
